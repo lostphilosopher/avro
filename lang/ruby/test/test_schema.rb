@@ -160,4 +160,21 @@ class TestSchema < Test::Unit::TestCase
       ]
     }
   end
+
+  def test_support_for_doc_attribute
+    schema = Avro::Schema.parse <<-SCHEMA
+      {"type": "record", "name": "Record", "namespace": "my.name.space",
+        "fields": [
+          {"name": "name", "type": "boolean", "default": false, "doc": "documentation"}
+        ]
+      }
+    SCHEMA
+
+    assert_equal schema.to_avro, {
+      'type' => 'record', 'name' => 'Record', 'namespace' => 'my.name.space',
+      'fields' => [
+        {'name' => 'name', 'type' => 'boolean', 'default' => false, 'doc' => 'documentation'}
+      ]
+    }
+  end
 end

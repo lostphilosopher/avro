@@ -5,9 +5,9 @@
 # to you under the Apache License, Version 2.0 (the
 # "License"); you may not use this file except in compliance
 # with the License.  You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -139,7 +139,7 @@ EOS
 
 }
 EOS
-  ExampleProtocol.new(<<-EOS, true)
+  ExampleProtocol.new(<<-EOS, true),
 {"namespace": "org.apache.avro.test",
  "protocol": "BulkData",
 
@@ -157,6 +157,25 @@ EOS
          "response": "null"
      }
 
+ }
+
+}
+EOS
+  ExampleProtocol.new(<<-EOS, true),
+{"namespace": "org.apache.avro.test",
+ "protocol": "Test",
+
+ "types": [
+     {"name": "TestDoc", "type": "record",
+      "fields": [ {"name": "name", "type": "string", "doc": "documentation"} ]
+     }
+ ],
+
+ "messages": {
+     "echo": {
+         "request": [{"name": "record", "type": "TestDoc"}],
+         "response": "TestDoc"
+     }
  }
 
 }
@@ -195,5 +214,11 @@ EOS
     protocol.types.each do |type|
       assert_equal type.namespace, 'com.acme'
     end
+  end
+
+  def test_support_for_doc_attribute
+    original = Protocol.parse(EXAMPLES.last.protocol_string)
+    puts original
+    assert_equal original.types.first.fields.first.doc, 'documentation'
   end
 end
